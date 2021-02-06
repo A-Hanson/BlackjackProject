@@ -13,11 +13,11 @@ public class Card {
 
 	@Override
 	public String toString() {
-		return "Card " + rank + " of " + suit;
+		return rank + " of " + suit;
 	}
 	
 	public int getValue() {
-		return this.getValue();
+		return rank.getValue();
 	}
 
 
