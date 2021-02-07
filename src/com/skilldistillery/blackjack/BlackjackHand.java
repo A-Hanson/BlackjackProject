@@ -22,7 +22,11 @@ public class BlackjackHand extends Hand{
 	}
 	
 	public String printHandValue() {
-		return "The current value of the hand is: " + getHandValue();
+		if (isSoft()) {
+			return "The current value of the hand is a soft: " + getHandValue();
+			
+		}
+		return "The current value of the hand is a hard: " + getHandValue();
 	}
 	
 	public boolean isBlackjack() {
@@ -31,34 +35,31 @@ public class BlackjackHand extends Hand{
 	}
 	
 	public boolean isBust() {
-		return (getHandValue() > 21);
-	}
-	
-//	public boolean isHard() {
-//		// optional
-//		// dealer has slightly different rules
-//	}
-//	
-//	public boolean isSoft() {
-//		// optional
-//	}
-	
-	public String printDealerHand(boolean secondFaceDown) {
-		StringBuilder sb = new StringBuilder("The dealer has " + cards.size() + " cards in their hand.");
-		if (cards.size() > 0) {
-			sb.append("\nThey are: ");
-			for (int i = 0; i < cards.size(); i++) {
-				if (secondFaceDown && i==1) {
-					sb.append("Second card is face down, ");
-				} else {
-					sb.append(cards.get(i) + ", ");
-				}
-			}
-			// remove last space and comma
-			sb.deleteCharAt(sb.length()-1);
-			sb.deleteCharAt(sb.length()-1);
+		if (isSoft()) {
+			return (getHandValue() > 31);
+			
+		} else {
+			return (getHandValue() > 21);
 		}
-		return sb.toString();
 	}
+	
+	public boolean isHard() {
+		// optional
+		return (!isSoft());
+		
+	}
+	
+	public boolean isSoft() {
+		//optional
+
+		for (Card card : cards) {
+			if (card.getValue() == 11) {
+				return true;
+			}
+		} 
+		return false;
+	}
+	
+	
 
 }

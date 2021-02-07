@@ -55,7 +55,7 @@ class BlackjackHandTester {
 
 	@Test
 	void test_toString_returns_zero_cards_in_hand_with_no_cards_added() {
-		assertEquals("You have 0 cards in your hand."
+		assertEquals("There are 0 cards in the hand."
 				, hand.toString());
 	}
 	
@@ -63,7 +63,7 @@ class BlackjackHandTester {
 	void test_toString_returns_two_cards_in_hand_with_two_cards_added() {
 		hand.addCard(card1);
 		hand.addCard(card2);
-		assertEquals("You have 2 cards in your hand.\nThey are: TWO of Diamonds, TWO of Spades"
+		assertEquals("There are 2 cards in the hand.\nThey are: TWO of Diamonds, TWO of Spades"
 				, hand.toString());
 	}
 	

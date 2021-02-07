@@ -24,7 +24,7 @@ public abstract class Hand {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("You have " + cards.size() + " cards in your hand.");
+		StringBuilder sb = new StringBuilder("There are " + cards.size() + " cards in the hand.");
 		if (cards.size() > 0) {
 			sb.append("\nThey are: ");
 			for (Card card : cards) {

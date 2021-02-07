@@ -21,7 +21,6 @@ public class Card {
 	}
 
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

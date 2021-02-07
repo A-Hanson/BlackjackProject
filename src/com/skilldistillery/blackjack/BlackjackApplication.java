@@ -7,8 +7,8 @@ import java.util.Scanner;
 import com.skilldistillery.cards.Deck;
 
 public class BlackjackApplication {
-	private BlackjackHand player;
-	private BlackjackHand dealer;
+	private BlackjackHandPlayer player;
+	private BlackjackHandDealer dealer;
 	private Deck deck;
 
 	public static void main(String[] args) {
@@ -42,24 +42,31 @@ public class BlackjackApplication {
 		do {
 			// deal hands (don't forget to shuffle!)
 			deck.shuffle();
-			initialDeal();
-			// choice stand or hit
-			boolean dealerGoes;
-			dealerGoes = isPlayersTurn(kb);
-			// dealer only goes if player didn't bust.
-			if (dealerGoes) {
-				// dealers turn if .getHandValue > 17 must stand,
-				// if .getHandValue <= 16 must hit
-				boolean needToCompareScores;
-				needToCompareScores = isDealersTurn();
-				if (needToCompareScores) {
-					// compare scores only if dealer didn't bust
-					compareScores();
+			boolean continueWithPlay = true;
+			// check for Blackjack hand off the initial deal
+			continueWithPlay = initialDeal();
+			if (continueWithPlay) {
+				// choice stand or hit
+				boolean dealerGoes;
+				dealerGoes = isPlayersTurn(kb);
+				// dealer only goes if player didn't bust.
+				if (dealerGoes) {
+					// dealers turn if .getHandValue > 17 must stand,
+					// if .getHandValue <= 16 must hit
+					boolean needToCompareScores;
+					needToCompareScores = isDealersTurn();
+					if (needToCompareScores) {
+						// compare scores only if dealer didn't bust
+						compareScores();
+					}
 				}
 			}
+				
 			// clear the hands
 			player.clear();
 			dealer.clear();
+			// reset dealer's turn
+			dealer.setTurn(false);
 			keepPlaying = endOfGameContinue(kb);
 		} while (keepPlaying);
 		
@@ -67,6 +74,7 @@ public class BlackjackApplication {
 	}
 	
 	private void compareScores() {
+		// not sure of next steps with implementing the idea of soft hand totals.
 		if (player.getHandValue() > dealer.getHandValue()) {
 			System.out.println("You win!");
 			
@@ -81,11 +89,12 @@ public class BlackjackApplication {
 	}
 	
 	private boolean isDealersTurn() {
+		dealer.setTurn(true);
 		boolean compareScores = true;
 		boolean keepGoing = true;
 		while (keepGoing) {
 			if (dealer.getHandValue() <= 16) {
-				dealAndPrintDealer(false);
+				dealAndPrintDealer();
 				if (dealer.isBust()) {
 					keepGoing = false;
 					compareScores = false;
@@ -98,9 +107,9 @@ public class BlackjackApplication {
 			}
 			else {
 				keepGoing = false;
-				printDealerHand(keepGoing);
-				System.out.println(dealer.printHandValue());
 				System.out.println("The dealer stands. Let's compare scores.");
+				printDealerHand();
+				System.out.println(dealer.printHandValue());
 			}
 			
 		}
@@ -146,21 +155,24 @@ public class BlackjackApplication {
 	
 	private void dealAndPrintPlayer() {
 		player.addCard(deck.dealCard());
+		System.out.println("The dealer passes you a card.");
 		printPlayerHand();
 		System.out.println(player.printHandValue());
 		System.out.println();
 	}
 	
-	private void dealAndPrintDealer(boolean isNotTurn) {
+	private void dealAndPrintDealer() {
 		dealer.addCard(deck.dealCard());
-		printDealerHand(isNotTurn);
-		if (!isNotTurn) {
+		System.out.println("The dealer deals themself a card.");
+		printDealerHand();
+		if (dealer.isTurn()) {
 			System.out.println(dealer.printHandValue());
 		}
 		System.out.println();
 	}
 	
-	private void initialDeal() {
+	private boolean initialDeal() {
+		boolean keepPlaying = true;
 		// deal two cards to each person
 		System.out.println();
 		System.out.println("The dealer starts to pass out cards...");
@@ -168,9 +180,17 @@ public class BlackjackApplication {
 		for (int i = 0; i<2; i++) {
 			dealAndPrintPlayer();
 			System.out.println("---------------------");
-			dealAndPrintDealer(true);
+			dealAndPrintDealer();
 			System.out.println("---------------------");
 		}
+		if (player.isBlackjack()) {
+			if (dealer.isBlackjack()) {
+				System.out.println("Both dealer and player got blackjack hands!!!!!");
+			}
+			keepPlaying = false;
+			System.out.println("You got a Blackjack hand off the inital deal and the dealer didn't! YOU WIN!!!!!");
+		}
+		return keepPlaying;
 	}
 	
 	private boolean endOfGameContinue(Scanner kb) {
@@ -201,13 +221,13 @@ public class BlackjackApplication {
 		System.out.println(player.toString());
 	}
 	
-	private void printDealerHand(boolean secondFaceDown) {
-		System.out.println(dealer.printDealerHand(secondFaceDown));
+	private void printDealerHand() {
+		System.out.println(dealer.toString());
 	}
 	
 	public BlackjackApplication() {
-		player = new BlackjackHand();
-		dealer = new BlackjackHand();
+		player = new BlackjackHandPlayer();
+		dealer = new BlackjackHandDealer();
 		deck = new Deck();
 	}
 	
